@@ -1,0 +1,15 @@
+.bookingForm{
+    height: 560px;
+}
+
+/* slots */
+.slots{
+    width:170px;
+    height :70px;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+    cursor: pointer;
+}

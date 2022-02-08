@@ -1,5 +1,6 @@
 .bookingForm{
     height: 560px;
+    margin-bottom: 21px;
 }
 
 /* slots */
@@ -13,3 +14,4 @@
     font-weight: bolder;
     cursor: pointer;
 }
+

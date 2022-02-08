@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Container, Button } from 'react-bootstrap';
 import { Navigate, useNavigate,Link } from 'react-router-dom';
 import sweet from 'sweetalert2';
-import {addUser} from '../API/apiCalls'
+import {addUser,bookSlot} from '../API/apiCalls'
 import '../CSS/register.css'
 const regForName = RegExp(/^[A-Za-z]{3,10}$/);
 const regForUName = RegExp(/^[A-Za-z]{2,12}$/);
@@ -116,12 +116,13 @@ function Register() {
                       })
                 }
                 else {
+                    bookSlot({userId:'', location: [], date: [], fromTime: [], toTime: [], vehicle: [], bookings: [] })
                     sweet.fire({
                         title: res.data.message,
-                        text:"Thank you for your patience !verification link is sent to your email address! kindly verify to login",
+                        text:"Registered Successfully",
                         icon:"success",
                       })
-                    // navigate('/')
+                    
                 }
             })
     }

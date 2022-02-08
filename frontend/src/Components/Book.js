@@ -6,7 +6,8 @@ import Navbars from './Navbars';
 import '../CSS/login.css'
 import '../CSS/booking.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { getSlots } from '../API/apiCalls';
+import { getBookingData, getSlots } from '../API/apiCalls';
+import Footer from './Footer';
 const regForName = RegExp(/^[a-zA-Z0-9\s,.'-]{3,}$/);
 function Book() {
     const [bookingData, setBookingData] = useState({
@@ -48,9 +49,9 @@ function Book() {
                     errors.date = "year should be current";
                     break;
                 }
-                else if(myDate.getMonth()!=today.getMonth()){
-                    errors.date="Month should be current"
-                }
+                // else if(myDate.getDate()>today.getDate()+3){
+                //     errors.date="you can book a slot upto 3 days"
+                // }
                 else {
                     errors.date = ''
                     break;
@@ -125,7 +126,7 @@ function Book() {
                     }
                     else if (myTime.getMinutes() > 0) {
                         errors.fromTime = ''
-                        errors.toTime = "Minutes should be round figured e.g 1:30 or 1:00";
+                        errors.toTime = "Minutes should be round figu#FF3131 e.g 1:30 or 1:00";
                         break;
                     }
                     else if (myTime.getTime() != beforeTime.getTime()) {
@@ -133,7 +134,7 @@ function Book() {
                         errors.toTime = "";
                     }
                     else {
-                        errors.toTime = "Minutes should be round figured e.g 1:30 or 1:00"
+                        errors.toTime = "Minutes should be round figu#FF3131 e.g 1:30 or 1:00"
                         break;
                     }
                 }
@@ -144,7 +145,7 @@ function Book() {
                     break;
                 }
                 else if (myTime.getMinutes() != 30 && myTime.getMinutes() != 0) {
-                    errors.toTime = "Minutes should be round figured e.g 1:30 or 1:00"
+                    errors.toTime = "Minutes should be round figu#FF3131 e.g 1:30 or 1:00"
                     break;
                 }
                 else if (beforeTime.getHours() < timess.getHours()) {
@@ -164,6 +165,7 @@ function Book() {
     const didi = () => {
         let arr = []
         let count=0;
+        let countDate=0;
         if (errors.date == '' && errors.fromTime == '' && errors.toTime == '' && bookingData.location != '' && bookingData.vehicle != '') {
             setFlag(1)
             // sweet.fire({
@@ -171,18 +173,76 @@ function Book() {
             //     icon: "success",
             //     timer: 2000
             // })
+            // getSlots().then((res) => {
+            //     if (sessionStorage.getItem("slots")) {
+            //         let slots = JSON.parse(sessionStorage.getItem("slots"))
+            //         for (let i = 0; i < res.data.length; i++) {
+            //             console.log(res.data[i].locationName==bookingData.location)
+            //             if (res.data[i].locationName == bookingData.location) {
+            //                 console.log("hie")
+            //                 for (let j = 0; j < res.data[i].bookedSlots.length; j++) {
+            //                     let dbDate = new Date(res.data[i].bookedSlots[j].date).getDate();
+            //                     let myDate = new Date(bookingData.date).getDate();
+            //                     console.log(myDate, dbDate)
+            //                     if (myDate == dbDate) {
+            //                         countDate++;
+            //                         console.log("date same")
+            //                         let dbTime = new Date(new Date().toDateString() + ' ' + res.data[i].bookedSlots[j].fromTime).getHours()
+            //                         let myTime = new Date(new Date().toDateString() + ' ' + bookingData.fromTime).getHours()
+            //                         if (dbTime == myTime) {
+            //                             console.log("yes")
+            //                             arr.push(res.data[i].bookedSlots[j].slots)
+            //                             console.log(arr)
+            //                             slots.forEach(function (arrayItem, index) {
+            //                                 if (arr.includes(index+1)) {
+            //                                     slots[index].color = "#FF3131";
+            //                                 }
+            //                                 else{
+            //                                     slots[index].color="#22DD22"
+            //                                 }
+            //                             })
+            //                             count++;
+            //                             console.log("count",count)
+            //                         }
+            //                         else if(count==0){
+            //                             console.log("no")
+            //                             slots.forEach(function (arrayItem, index) {
+            //                                 slots[index].color = "#22DD22"
+            //                             })
+            //                         }
+            //                     }
+            //                     else if(countDate==0){
+            //                         slots.forEach(function (arrayItem, index) {
+            //                             slots[index].color = "#22DD22"
+            //                         })
+            //                     }
+
+            //                 }
+            //             }
+            //         }
+            //         console.log(slots)
+            //         setSlotData(slots)
+            //         sessionStorage.setItem("slots", JSON.stringify(slots))
+            //     }
+            // })
+
             getSlots().then((res) => {
                 if (sessionStorage.getItem("slots")) {
                     let slots = JSON.parse(sessionStorage.getItem("slots"))
                     for (let i = 0; i < res.data.length; i++) {
                         console.log(res.data[i].locationName==bookingData.location)
+                        
                         if (res.data[i].locationName == bookingData.location) {
+                            // getBookingData({id:res.data[i]._id}).then((res)=>{
+
+                            // })
                             console.log("hie")
                             for (let j = 0; j < res.data[i].bookedSlots.length; j++) {
                                 let dbDate = new Date(res.data[i].bookedSlots[j].date).getDate();
                                 let myDate = new Date(bookingData.date).getDate();
                                 console.log(myDate, dbDate)
                                 if (myDate == dbDate) {
+                                    countDate++;
                                     console.log("date same")
                                     let dbTime = new Date(new Date().toDateString() + ' ' + res.data[i].bookedSlots[j].fromTime).getHours()
                                     let myTime = new Date(new Date().toDateString() + ' ' + bookingData.fromTime).getHours()
@@ -192,10 +252,10 @@ function Book() {
                                         console.log(arr)
                                         slots.forEach(function (arrayItem, index) {
                                             if (arr.includes(index+1)) {
-                                                slots[index].color = "red";
+                                                slots[index].color = "#FF3131";
                                             }
                                             else{
-                                                slots[index].color="green"
+                                                slots[index].color="#22DD22"
                                             }
                                         })
                                         count++;
@@ -204,15 +264,15 @@ function Book() {
                                     else if(count==0){
                                         console.log("no")
                                         slots.forEach(function (arrayItem, index) {
-                                            slots[index].color = "green"
+                                            slots[index].color = "#22DD22"
                                         })
                                     }
                                 }
-                                // else{
-                                //     slots.forEach(function (arrayItem, index) {
-                                //         slots[index].color = "green"
-                                //     })
-                                // }
+                                else if(countDate==0){
+                                    slots.forEach(function (arrayItem, index) {
+                                        slots[index].color = "#22DD22"
+                                    })
+                                }
 
                             }
                         }
@@ -222,7 +282,7 @@ function Book() {
                     sessionStorage.setItem("slots", JSON.stringify(slots))
                 }
             })
-            // dispatch({type:"slots",payload:"red",location:bookingData.location,fromTime:bookingData.fromTime,toTime:bookingData.toTime,date:bookingData.date})
+            // dispatch({type:"slots",payload:"#FF3131",location:bookingData.location,fromTime:bookingData.fromTime,toTime:bookingData.toTime,date:bookingData.date})
         }
 
         else {
@@ -266,7 +326,7 @@ function Book() {
                         <Form.Control type="date" name="date" onChange={bookData} />
                     </Form.Group>
                     {errors.date.length > 0 &&
-                        <span style={{ color: "red" }}>{errors.date}</span>}
+                        <span style={{ color: "#FF3131" }}>{errors.date}</span>}
                     <Form.Group className="mb-2" >
                         <Form.Label className='text-dark mt-2 label1'>From Time:</Form.Label>
                         <Form.Select aria-label="Default select example" name="fromTime" onChange={bookData}>
@@ -296,19 +356,20 @@ function Book() {
                         </Form.Select>
                     </Form.Group>
                     {errors.fromTime.length > 0 &&
-                        <span style={{ color: "red" }}>{errors.fromTime}</span>}
+                        <span style={{ color: "#FF3131" }}>{errors.fromTime}</span>}
                     <Form.Group  >
                         <Form.Label className='text-dark mt-2 label1'>To Time:</Form.Label>
                         <Form.Control type="time" name="toTime" onChange={bookData} />
                     </Form.Group>
                     {errors.toTime.length > 0 &&
-                        <span style={{ color: "red" }}>{errors.toTime}</span>}
+                        <span style={{ color: "#FF3131" }}>{errors.toTime}</span>}
                 </fieldset>
                 <Button onClick={didi}>Show slots</Button>
             </Form>
             {flag == 1 && <Slots location={bookingData.location} date={bookingData.date} fromTime={bookingData.fromTime} vehicle={bookingData.vehicle} toTime={bookingData.toTime} slotData={slotData} />}
             {/* <Slots/> */}
         </Container>
+        <Footer/>
     </div>;
 }
 

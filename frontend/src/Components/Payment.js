@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Button, Col, Modal, Row,Form } from "react-bootstrap";
+import { Button, Col, Modal, Row, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { bookSlot, getSlots, locationBooking } from '../API/apiCalls';
 import { useLocation, useNavigate } from 'react-router-dom';
 import sweet from 'sweetalert2';
 import Navbars from "./Navbars";
 import '../CSS/payment.css'
+import Footer from "./Footer";
 let nameReg = /^[a-zA-Z][a-zA-Z ]*$/;
 let cardReg = /"^4[0-9]{12}(?:[0-9]{3})?$"/
 function Payment() {
@@ -23,11 +24,12 @@ function Payment() {
     const navigate = useNavigate()
     console.log(location)
     useEffect(() => {
+        if(location.state!=undefined){
         setData(location.state)
         let beforeTime = new Date(new Date().toDateString() + ' ' + location.state.fromTime).getTime()
         let nextTime = new Date(new Date().toDateString() + ' ' + location.state.toTime).getTime()
-        setTime1(beforeTime/60000)
-        setTime2(nextTime/60000)
+        setTime1(beforeTime / 60000)
+        setTime2(nextTime / 60000)
         let totalValue
         if (location.state.vehicle == "4 wheeler") {
             let time = (nextTime - beforeTime) / 60000;
@@ -42,6 +44,7 @@ function Payment() {
 
             setFare(50)
         }
+    }
     }, []);
     const handler = (event) => {
         const { name, value } = event.target
@@ -56,7 +59,7 @@ function Payment() {
                 break;
 
             case "cvv":
-                errors.cvv=value.length==3 ?'':"enter three numbers";
+                errors.cvv = value.length == 3 ? '' : "enter three numbers";
                 break;
         }
 
@@ -65,27 +68,27 @@ function Payment() {
     }
     const Checkout = (e) => {
         e.preventDefault()
-if(errors.cardName==''&& errors.cardNumber==''&& errors.cvv==''){
-        bookSlot({ location: data.location, date: data.date, fromTime: data.fromTime, toTime: data.toTime, vehicle: data.vehicle, userId: data.id, bookings: data.bookings })
-        locationBooking({ bookings: { slots: data.bookings, date: data.date, fromTime: data.fromTime, toTime: data.toTime }, location: data.location })
-        setTimeout(() => {
-            sessionStorage.clear()
-        }, 1000);
-        sweet.fire({
-            title:"Payment Successfull",
-            text:"Thank your booking slot here!",
-            icon:"success",
-            timer:2000
-          })
-        navigate('/dashboard')
-    }
-    else{
-        sweet.fire({
-            title: "Fill all fields Properly",
-            icon:"warning",
-            timer:1000
-          })
-    }
+        if (errors.cardName == '' && errors.cardNumber == '' && errors.cvv == '') {
+            bookSlot({ location: data.location, date: data.date, fromTime: data.fromTime, toTime: data.toTime, vehicle: data.vehicle, userId: data.id, bookings: data.bookings })
+            locationBooking({ bookings: { slots: data.bookings, date: data.date, fromTime: data.fromTime, toTime: data.toTime }, location: data.location })
+            setTimeout(() => {
+                sessionStorage.clear()
+            }, 1000);
+            sweet.fire({
+                title: "Payment Successfull",
+                text: "Thank your booking slot here!",
+                icon: "success",
+                timer: 2000
+            })
+            navigate('/dashboard')
+        }
+        else {
+            sweet.fire({
+                title: "Fill all fields Properly",
+                icon: "warning",
+                timer: 1000
+            })
+        }
     }
     return (<>
         <Navbars />
@@ -116,14 +119,14 @@ if(errors.cardName==''&& errors.cardNumber==''&& errors.cvv==''){
 
                 <div class="row">
                     <div className="col-50 mt-2">
-                <label for="cname">Expiry Year</label>
-                <Form.Select aria-label="Default select example">
-                    <option value='22'>2022</option>
-                    <option value='23'>2023</option>
-                    <option value='24'>2024</option>
-                    <option value='25'>2025</option>
-                    <option value='26'>2026</option>
-                    </Form.Select>
+                        <label for="cname">Expiry Year</label>
+                        <Form.Select aria-label="Default select example">
+                            <option value='22'>2022</option>
+                            <option value='23'>2023</option>
+                            <option value='24'>2024</option>
+                            <option value='25'>2025</option>
+                            <option value='26'>2026</option>
+                        </Form.Select>
                     </div>
                     <div class="col-50">
                         <label for="cvv">CVV</label>
@@ -133,22 +136,26 @@ if(errors.cardName==''&& errors.cardNumber==''&& errors.cvv==''){
                 </div>
             </Col>
             <Col>
-                <div >
-                    <div class="container">
-                <h4 className="mb-3">Billing Details
-                </h4>
-                <p>Vehicle Type<span class="price">{location.state.vehicle}</span></p>
-                <p>Slot Number<span class="price">Slot {location.state.bookings}</span></p>
-                <p>Base Fare <span class="price">Rs.{fare}</span></p>
-                <p>Total Hrs<span class="price">{(time2-time1)/60} hrs</span></p>
-                <p>Per 30 mints charge <span class="price">Rs.10</span></p>
-                <hr />
-                <p>Total <span class="price"><strong>Rs.{total}</strong></span></p>
-            </div>
+                <div>
+                    {
+                        location.state != undefined &&
+                        <div class="container">
+                            <h4 className="mb-3">Billing Details
+                            </h4>
+                            <p>Vehicle Type<span class="price">{location.state.vehicle}</span></p>
+                            <p>Slot Number<span class="price">Slot {location.state.bookings}</span></p>
+                            <p>Base Fare <span class="price">Rs.{fare}</span></p>
+                            <p>Total Hrs<span class="price">{(time2 - time1) / 60} hrs</span></p>
+                            <p>Per 30 mints charge <span class="price">Rs.10</span></p>
+                            <hr />
+                            <p>Total <span class="price"><strong>Rs.{total}</strong></span></p>
+                        </div>
+                    }
                 </div>
             </Col>
-            <Button variant="success" className="fw-bold" onClick={Checkout}>Pay Now</Button>
+            <Button variant="success" className="fw-bold mb-3" onClick={Checkout}>Pay Now</Button>
         </Row>
+        <Footer/>
     </>
     )
 }

@@ -22,41 +22,6 @@ const addUser=(req,res)=>{
         else{
             res.json({err:0})
         }
-        // else {
-        //     rand = Math.floor((Math.random() * 100) + 54);
-        //     host = req.get('host');
-        //     link = "http://" + req.get('host') + "/api"+"/users"+"/verify?id=" + rand;
-        //     console.log(link)
-        //     let smtpTransoprt = nodemailer.createTransport({
-        //         service: 'gmail',
-        //         port: 465,
-        //         auth: {
-        //             user: process.env.email,
-        //             pass: process.env.password,
-        //         }
-        //     });
-        //     mailOptions = {
-        //         to: req.body.emailAdd,
-        //         subject: "Please confirm your Email account",
-        //         html: `Please click here to verify <a href=${link} >verify email</a>`
-        //     }
-        //     console.log(mailOptions);
-        //     smtpTransoprt.sendMail(mailOptions, function (error, response) {
-        //         if (error) {
-        //             console.log(error);
-        //             res.send("error");
-        //         } else {
-        //             console.log("Message sent: ");
-        //             res.json({
-        //                 success: true,
-        //                 status_code: 200,
-        //                 message: `Hey ! ${req.body.firstName} was registered successfully`,
-        //                 err: 0
-        //             })
-        //         }
-        //     });
-           
-        // }
 
     })
    
@@ -70,14 +35,12 @@ const loginUser=(req,res)=>{
         else if (data == null) {
             res.json({ err: 1, message: "Please write correct email id" })
         }
-        // else if(data.isVerified==false){
-          
-        //     res.json({err:1,message:"please verify your email address"})
-        // }
         else if ((bcrypt.compareSync(req.body.password, data.password))) {
             let payload = {
                 emailAdd: req.body.emailAdd,
                 photo:data.photo,
+                firstName:data.firstName,
+                lastName:data.lastName,
                 id: data._id,
             }
             const token = jwt.sign(payload, jwtSecret, { expiresIn: 360000 })

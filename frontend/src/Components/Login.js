@@ -3,7 +3,7 @@ import { Button, Row, Col, Card, Form, Container } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import sweet from 'sweetalert2'
-import { loginUser } from '../API/apiCalls';
+import { loginUser,bookSlot } from '../API/apiCalls';
 import '../CSS/login.css'
 
 const regForEmail = RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);

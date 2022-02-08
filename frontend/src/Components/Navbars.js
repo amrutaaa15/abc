@@ -1,9 +1,20 @@
-import React from 'react';
+import jwtDecode from 'jwt-decode';
+import React,{useState,useEffect} from 'react';
 import {Navbar,Button,Nav,Container} from 'react-bootstrap'
 import{Link, useNavigate} from 'react-router-dom'
+
 import '../CSS/navdash.css'
 function Navbars() {
+  const [data,setData]=useState()
   const navigate=useNavigate()
+  useEffect(() => {
+    if (localStorage.getItem("_token")) {
+      let token = localStorage.getItem('_token');
+      let decode = jwtDecode(token);
+      setData(decode)
+    }
+  }, []);
+  
   const signOutButton=()=>{
     localStorage.clear()
     navigate('/')
@@ -15,7 +26,11 @@ function Navbars() {
     <Link to='/dashboard' className='text-decoration-none'><Navbar.Brand><span className='text-warning parking'>Parking</span><span className='text-success drive' >Stars</span></Navbar.Brand></Link>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
-     <Nav.Link className='text text-white'> Signed in as: <Link to="/dashboard"className=" text-warning">Amruta Khamkar</Link></Nav.Link> 
+      {
+        data!=undefined &&
+        <Nav.Link className='text text-white'> Signed in as: <Link to="/profile"className=" text-warning">{data.firstName} {data.lastName}</Link></Nav.Link> 
+      }
+  
     <Nav.Link><Button variant="danger" className='signBtn' onClick={signOutButton}>Sign Out</Button></Nav.Link>
     </Navbar.Collapse>
   </Container>
